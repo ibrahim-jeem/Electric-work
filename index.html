@@ -5,32 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Electrical Load Calculator, Phase Balancer & SLD Generator</title>
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0284c7',
-                            600: '#0369a1',
-                            700: '#075985',
-                            900: '#0c4a6e'
-                        },
-                        phaseR: '#ef4444',
-                        phaseY: '#eab308',
-                        phaseB: '#3b82f6',
-                        phaseN: '#6b7280',
-                        phaseE: '#22c55e'
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Tailwind CSS (pre-compiled, no CDN) -->
+    <link rel="stylesheet" href="css/tailwind.css">
 
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -38,48 +14,7 @@
     <!-- Canvas Confetti & xlsx CDN for Excel Export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        .font-mono {
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(51, 65, 85, 0.8);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(71, 85, 105, 1);
-        }
-
-        .sld-node {
-            transition: all 0.2s ease;
-        }
-        .sld-node:hover {
-            filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.6));
-            cursor: pointer;
-        }
-
-        @media print {
-            .no-print { display: none !important; }
-            .print-only { display: block !important; }
-            body { background: white !important; color: black !important; }
-            .print-break { page-break-before: always; }
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-sky-500 selection:text-white">
 
@@ -92,9 +27,9 @@
                 </div>
                 <div>
                     <h1 class="font-bold text-lg leading-tight tracking-tight text-white flex items-center gap-2">
-                        ElectroLoad Pro <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30">v2.0 Pro</span>
+                        ElectroLoad Pro <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-sky-500/20 text-sky-400 border border-sky-500/30">v1</span>
                     </h1>
-                    <p class="text-xs text-slate-400">BNBC / NFPA / IEC Load Sizing & Multi-Tier Live SLD Engine</p>
+                    <p class="text-xs text-slate-400">BNBC / NFPA / IEC Load Sizing & Live SLD Engine</p>
                 </div>
             </div>
 
@@ -233,8 +168,8 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
             <!-- Fixtures & Load Entry Section (7 Cols) -->
-            <section class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col space-y-4">
-                <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-800">
+            <section class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col">
+                <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
                     <div>
                         <h2 class="font-bold text-slate-200 flex items-center gap-2 text-sm uppercase tracking-wider">
                             <i class="fa-solid fa-list-check text-sky-400"></i> Electrical Fixture Schedule
@@ -252,81 +187,59 @@
                     </div>
                 </div>
 
-                <!-- Feature 2: Quick Fixture Library Selection Dropdown directly above table -->
-                <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
-                    <div class="flex items-center gap-2 flex-1 min-w-[240px]">
-                        <i class="fa-solid fa-book-bookmark text-sky-400"></i>
-                        <label class="text-slate-300 font-semibold text-xs whitespace-nowrap">Fixture Library:</label>
-                        <select id="fixtureLibrarySelect" onchange="insertFromLibrary(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-slate-200 focus:outline-none focus:ring-1 focus:ring-sky-500">
-                            <option value="">-- Quick Select Fixture Spec --</option>
-                            <option value="LED Panel Light|Lighting|18|0.95|0.90|1.5 rm|1P">LED Panel Light (18W, PF 0.95, Min 1.5mm²)</option>
-                            <option value="LED Downlight|Lighting|12|0.95|0.90|1.5 rm|1P">LED Downlight (12W, PF 0.95, Min 1.5mm²)</option>
-                            <option value="General Duplex Socket|Receptacles|180|0.90|0.70|2.5 rm|1P">General Duplex Socket (180W, PF 0.90, Min 2.5mm²)</option>
-                            <option value="Power Outlet 16A|Receptacles|1500|0.95|0.80|4.0 rm|1P">High Power Socket 16A (1500W, Min 4.0mm²)</option>
-                            <option value="1.5 Ton AC Unit|HVAC|1800|0.85|0.85|4.0 rm|1P">1.5 Ton Split AC (1800W, Min 4.0mm²)</option>
-                            <option value="2.0 Ton AC Unit|HVAC|2400|0.85|0.85|4.0 rm|1P">2.0 Ton Split AC (2400W, Min 4.0mm²)</option>
-                            <option value="3-Phase Central Chiller|HVAC|7500|0.85|0.85|10.0 rm|3P">3-Phase Chiller (7500W, Min 10mm²)</option>
-                            <option value="Water Heater Geyser|Appliances|2000|1.00|1.00|4.0 rm|1P">Water Geyser (2000W, PF 1.0, Min 4.0mm²)</option>
-                            <option value="1.5 HP Water Pump|Motors|1100|0.80|1.00|2.5 rm|1P">1.5 HP Submersible Pump (1100W, Min 2.5mm²)</option>
-                            <option value="Induction Cooktop|Appliances|2200|0.98|0.80|4.0 rm|1P">Induction Cooktop (2200W, Min 4.0mm²)</option>
+                <!-- Circuit Grouping & Room Strategy -->
+                <div class="mb-4 p-3 bg-slate-950/60 border border-slate-800 rounded-xl text-xs grid grid-cols-1 md:grid-cols-3 gap-3 no-print">
+                    <label class="flex items-center justify-between gap-3 cursor-pointer">
+                        <span>
+                            <span class="block font-semibold text-slate-200">Auto Circuit Grouping</span>
+                            <span class="block text-[11px] text-slate-400" id="groupModeLabel">ON: CKT-1, CKT-2... allocated by breaker capacity</span>
+                        </span>
+                        <span class="relative inline-flex items-center shrink-0">
+                            <input type="checkbox" id="autoGroupToggle" class="sr-only peer" checked onchange="updateGrouping()">
+                            <span class="w-10 h-5 bg-slate-700 rounded-full peer-checked:bg-sky-600 transition after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-5"></span>
+                        </span>
+                    </label>
+                    <label id="roomToggleWrap" class="flex items-center justify-between gap-3 cursor-pointer">
+                        <span>
+                            <span class="block font-semibold text-slate-200">Auto Room Consolidation</span>
+                            <span class="block text-[11px] text-slate-400">Group loads by their Room / Location tag</span>
+                        </span>
+                        <span class="relative inline-flex items-center shrink-0">
+                            <input type="checkbox" id="roomConsolidateToggle" class="sr-only peer" checked onchange="updateGrouping()">
+                            <span class="w-10 h-5 bg-slate-700 rounded-full peer-checked:bg-sky-600 transition after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:w-4 after:h-4 after:bg-white after:rounded-full after:transition-all peer-checked:after:translate-x-5"></span>
+                        </span>
+                    </label>
+                    <div id="strategyWrap">
+                        <label class="block text-slate-400 font-medium mb-1">Room Strategy</label>
+                        <select id="roomStrategySelect" onchange="updateGrouping()" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                            <option value="combine">Combine low-power appliances into 1 CKT per room</option>
+                            <option value="separate">Separate CKT for every appliance</option>
                         </select>
                     </div>
+                    <p class="md:col-span-3 text-[11px] text-slate-500 leading-tight">
+                        <i class="fa-solid fa-circle-info text-sky-400 mr-1"></i> Low-power = up to 500 W per unit (not HVAC / motor); combined circuits are capped at a 16 A MCB after the safety factor. Heavy loads always get a dedicated CKT. With grouping OFF, type a CKT name per row to assign manually.
+                    </p>
                 </div>
-
-                <!-- Feature 1, 3, 4: Advanced Controls Sub-Bar (Topology Board Management & Consolidation Rules) -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-slate-950/60 p-3 rounded-xl border border-slate-800 text-xs">
-                    <!-- Feature 1: Board Hierarchy Control -->
-                    <div>
-                        <div class="flex items-center justify-between mb-1">
-                            <span class="text-slate-400 font-semibold flex items-center gap-1">
-                                <i class="fa-solid fa-sitemap text-indigo-400"></i> DB Hierarchy
-                            </span>
-                            <button onclick="addNewDBPrompt()" class="text-[10px] bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 rounded px-1.5 py-0.5 hover:bg-indigo-600/50">+ Add DB</button>
-                        </div>
-                        <select id="activeDBFilter" onchange="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-200">
-                            <option value="ALL">Show All Boards</option>
-                        </select>
-                    </div>
-
-                    <!-- Feature 3: Circuit Grouping Mode -->
-                    <div>
-                        <label class="block text-slate-400 font-semibold mb-1 flex items-center justify-between">
-                            <span class="flex items-center gap-1"><i class="fa-solid fa-layer-group text-sky-400"></i> Auto Grouping</span>
-                            <input type="checkbox" id="autoGroupingToggle" onchange="toggleAutoGrouping()" checked class="accent-sky-500">
-                        </label>
-                        <select id="circuitGroupingRule" onchange="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-200">
-                            <option value="80PCT">Max 80% Breaker Amp Capacity</option>
-                            <option value="10A">Max 10A Per Branch CKT</option>
-                            <option value="15A">Max 15A Per Branch CKT</option>
-                        </select>
-                    </div>
-
-                    <!-- Feature 4: Room Location Tagging & Consolidation -->
-                    <div>
-                        <label class="block text-slate-400 font-semibold mb-1 flex items-center justify-between">
-                            <span class="flex items-center gap-1"><i class="fa-solid fa-house-signal text-emerald-400"></i> Room Strategy</span>
-                        </label>
-                        <select id="roomConsolidationRule" onchange="recalculateAll()" class="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1 text-slate-200">
-                            <option value="COMBINE_LOW">Combine Low-Power Loads in Room</option>
-                            <option value="SEPARATE_ALL">Separate CKT For Every Load</option>
-                        </select>
-                    </div>
-                </div>
+                <datalist id="roomList"></datalist>
+                <datalist id="cktList"></datalist>
 
                 <!-- Load Items Table -->
                 <div class="overflow-x-auto flex-1">
                     <table class="w-full text-left border-collapse text-xs">
                         <thead>
                             <tr class="border-b border-slate-800 text-slate-400 font-semibold uppercase bg-slate-950/50">
-                                <th class="py-2.5 px-2">Fixture / Location</th>
+                                <th class="py-2.5 px-2">Fixture / Circuit Name</th>
+                                <th class="py-2.5 px-2 w-28">Room / Location</th>
+                                <th class="py-2.5 px-2 w-24">Board</th>
                                 <th class="py-2.5 px-2">Category</th>
-                                <th class="py-2.5 px-2 w-14 text-center">Qty</th>
-                                <th class="py-2.5 px-2 w-16">Watts</th>
-                                <th class="py-2.5 px-2 w-14">P.F.</th>
-                                <th class="py-2.5 px-2 w-24">Target Board</th>
-                                <th class="py-2.5 px-2 w-16">CKT ID</th>
+                                <th class="py-2.5 px-2 w-16 text-center">Qty</th>
+                                <th class="py-2.5 px-2 w-20">Watts</th>
+                                <th class="py-2.5 px-2 w-16">P.F.</th>
+                                <th class="py-2.5 px-2 w-16">Dist(m)</th>
+                                <th class="py-2.5 px-2 w-16">Supply</th>
+                                <th class="py-2.5 px-2 w-20">Circuit</th>
                                 <th class="py-2.5 px-2 w-20">Phase</th>
-                                <th class="py-2.5 px-2 text-right w-10">Act</th>
+                                <th class="py-2.5 px-2 text-right w-12">Action</th>
                             </tr>
                         </thead>
                         <tbody id="fixtureTableBody" class="divide-y divide-slate-800/60 font-sans">
@@ -347,16 +260,9 @@
                             <p class="text-xs text-slate-400">Real-time load distribution across phases</p>
                         </div>
 
-                        <!-- Feature 5: Auto-Phase Balance toggle integrated smoothly -->
-                        <div class="flex items-center gap-2">
-                            <label class="text-[11px] text-slate-400 font-semibold flex items-center gap-1 cursor-pointer">
-                                <input type="checkbox" id="autoBalanceToggle" onchange="toggleAutoPhaseBalancing()" class="accent-amber-500">
-                                Auto-Phase
-                            </label>
-                            <button id="autoBalanceBtn" onclick="autoBalancePhases()" class="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i> Balance
-                            </button>
-                        </div>
+                        <button id="autoBalanceBtn" onclick="autoBalancePhases()" class="px-3 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Balance
+                        </button>
                     </div>
 
                     <!-- Phase Visual Bars -->
@@ -418,6 +324,41 @@
             </section>
         </div>
 
+        <!-- Distribution Board Hierarchy (MDB / SDB / SB / FDB / RDB) -->
+        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl overflow-hidden">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
+                <div>
+                    <h2 class="font-bold text-slate-200 flex items-center gap-2 text-sm uppercase tracking-wider">
+                        <i class="fa-solid fa-sitemap text-amber-400"></i> Distribution Board Hierarchy (MDB &rarr; SDB &rarr; SB)
+                    </h2>
+                    <p class="text-xs text-slate-400">Add FDB / RDB or extra levels. Each board gets a feeder MCB, wire size and V-drop. 3-phase boards can feed other boards.</p>
+                </div>
+                <button onclick="addBoard()" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-sm no-print">
+                    <i class="fa-solid fa-plus"></i> Add Board
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-slate-400 font-semibold uppercase bg-slate-950/50">
+                            <th class="py-2.5 px-2">Board</th>
+                            <th class="py-2.5 px-2">Type</th>
+                            <th class="py-2.5 px-2">Fed From</th>
+                            <th class="py-2.5 px-2">Supply</th>
+                            <th class="py-2.5 px-2 w-20">Feed Dist (m)</th>
+                            <th class="py-2.5 px-2">Load (kW)</th>
+                            <th class="py-2.5 px-2">Current (A)</th>
+                            <th class="py-2.5 px-2">Feeder MCB</th>
+                            <th class="py-2.5 px-2">Feeder Wire</th>
+                            <th class="py-2.5 px-2">V-Drop (%)</th>
+                            <th class="py-2.5 px-2 text-right w-12 no-print">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="boardTableBody" class="divide-y divide-slate-800/60 font-mono"></tbody>
+                </table>
+            </div>
+        </section>
+
         <!-- Calculated Engineering Schedule Table (Breakers, Wire Sizing, Drop %) -->
         <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl overflow-hidden">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
@@ -436,8 +377,7 @@
                 <table class="w-full text-left border-collapse text-xs font-mono">
                     <thead>
                         <tr class="border-b border-slate-800 text-slate-400 font-semibold uppercase bg-slate-950/50">
-                            <th class="py-2.5 px-3">Circuit Tag</th>
-                            <th class="py-2.5 px-3">Board Location</th>
+                            <th class="py-2.5 px-3">Circuit / Fixture</th>
                             <th class="py-2.5 px-3">Load (W)</th>
                             <th class="py-2.5 px-3">Design I (A)</th>
                             <th class="py-2.5 px-3">Breaker MCB</th>
@@ -463,7 +403,7 @@
                     <h2 class="font-bold text-slate-200 flex items-center gap-2 text-sm uppercase tracking-wider">
                         <i class="fa-solid fa-diagram-project text-sky-400"></i> Dynamic Single-Line Diagram (SLD)
                     </h2>
-                    <p class="text-xs text-slate-400">Interactive schematic layout with live busbar and breaker nodes matching single-line standards</p>
+                    <p class="text-xs text-slate-400">Interactive schematic layout with live busbar and breaker nodes</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="downloadSldSvg()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold border border-slate-700 flex items-center gap-1.5 transition">
@@ -472,9 +412,9 @@
                 </div>
             </div>
 
-            <!-- Feature 6: Responsive SVG SLD Canvas -->
+            <!-- SLD Vector SVG Canvas -->
             <div class="w-full bg-slate-950 rounded-xl border border-slate-800 p-4 overflow-x-auto">
-                <svg id="sldSvg" class="w-full min-w-[800px] h-[520px]" xmlns="http://www.w3.org/2000/svg">
+                <svg id="sldSvg" class="w-full min-w-[800px] h-[480px]" xmlns="http://www.w3.org/2000/svg">
                     <!-- Dynamic rendering via JS -->
                 </svg>
             </div>
@@ -489,7 +429,7 @@
 
     <!-- MODAL 1: Fast Presets Library -->
     <div id="presetModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <button onclick="closePresetModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -498,44 +438,29 @@
             </h3>
             <p class="text-xs text-slate-400 mb-4">Click any fixture to add with standard BNBC/NFPA default wattages</p>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-[60vh] overflow-y-auto p-1">
-                <button onclick="addPresetItem('LED Ceiling Light', 'Lighting', 18, 0.95, 'SDB-1', 'Master Bed')" class="p-3 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-left transition space-y-1">
-                    <span class="text-xs font-bold text-slate-200 block">LED Panel Light</span>
-                    <span class="text-[11px] text-slate-400 block">18 Watts • PF 0.95</span>
-                </button>
-                <button onclick="addPresetItem('Duplex Socket Outlet', 'Receptacles', 180, 0.90, 'SDB-1', 'Living Room')" class="p-3 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-left transition space-y-1">
-                    <span class="text-xs font-bold text-slate-200 block">General Duplex Socket</span>
-                    <span class="text-[11px] text-slate-400 block">180 Watts (BNBC/NEC)</span>
-                </button>
-                <button onclick="addPresetItem('1.5 Ton AC Unit', 'HVAC', 1800, 0.85, 'SDB-1', 'Master Bed')" class="p-3 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-left transition space-y-1">
-                    <span class="text-xs font-bold text-slate-200 block">1.5 Ton Inverter AC</span>
-                    <span class="text-[11px] text-slate-400 block">1800 Watts • PF 0.85</span>
-                </button>
-                <button onclick="addPresetItem('2.0 Ton AC Unit', 'HVAC', 2400, 0.85, 'SDB-2', 'Living Room')" class="p-3 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-left transition space-y-1">
-                    <span class="text-xs font-bold text-slate-200 block">2.0 Ton Split AC</span>
-                    <span class="text-[11px] text-slate-400 block">2400 Watts • PF 0.85</span>
-                </button>
-                <button onclick="addPresetItem('Water Heater Geyser', 'Appliances', 2000, 1.0, 'SDB-1', 'Bathroom')" class="p-3 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-left transition space-y-1">
-                    <span class="text-xs font-bold text-slate-200 block">Water Heater (Geyser)</span>
-                    <span class="text-[11px] text-slate-400 block">2000 Watts • PF 1.0</span>
-                </button>
-                <button onclick="addPresetItem('Water Submersible Pump', 'Motors', 1100, 0.80, 'MDB-Main', 'Pump Room')" class="p-3 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-left transition space-y-1">
-                    <span class="text-xs font-bold text-slate-200 block">1.5 HP Water Pump</span>
-                    <span class="text-[11px] text-slate-400 block">1100 Watts • PF 0.80</span>
-                </button>
-                <button onclick="addPresetItem('Ceiling Fan', 'Lighting', 75, 0.90, 'SDB-1', 'Bed Room 2')" class="p-3 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-left transition space-y-1">
-                    <span class="text-xs font-bold text-slate-200 block">Ceiling Fan</span>
-                    <span class="text-[11px] text-slate-400 block">75 Watts • PF 0.90</span>
-                </button>
-                <button onclick="addPresetItem('Microwave Oven', 'Appliances', 1200, 0.95, 'SDB-2', 'Kitchen')" class="p-3 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-left transition space-y-1">
-                    <span class="text-xs font-bold text-slate-200 block">Microwave Oven</span>
-                    <span class="text-[11px] text-slate-400 block">1200 Watts • PF 0.95</span>
-                </button>
-                <button onclick="addPresetItem('Induction Cooktop', 'Appliances', 2200, 0.98, 'SDB-2', 'Kitchen')" class="p-3 bg-slate-950 hover:bg-slate-800 border border-slate-800 rounded-xl text-left transition space-y-1">
-                    <span class="text-xs font-bold text-slate-200 block">Induction Cooktop</span>
-                    <span class="text-[11px] text-slate-400 block">2200 Watts • PF 0.98</span>
-                </button>
+            <div class="flex flex-wrap items-center gap-2 mb-3 text-xs">
+                <label class="text-slate-400 font-medium">Add to board</label>
+                <select id="presetBoard" class="bg-slate-950 border border-slate-700 rounded-lg px-2 py-1.5 text-slate-100 focus:outline-none"></select>
             </div>
+            <div id="presetGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-[40vh] overflow-y-auto p-1"></div>
+
+            <details class="mt-4 text-xs">
+                <summary class="cursor-pointer font-semibold text-sky-400">Edit fixture library (watts, power factor, 1&Phi; / 3&Phi;)</summary>
+                <div class="mt-3 overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400 font-semibold uppercase bg-slate-950/50">
+                                <th class="py-2 px-2">Fixture</th><th class="py-2 px-2">Category</th><th class="py-2 px-2 w-20">Watts</th><th class="py-2 px-2 w-16">P.F.</th><th class="py-2 px-2 w-16">Supply</th><th class="py-2 px-2 w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="libTableBody" class="divide-y divide-slate-800/60"></tbody>
+                    </table>
+                </div>
+                <div class="flex gap-2 mt-2">
+                    <button onclick="addLibItem()" class="px-3 py-1.5 bg-sky-600/30 hover:bg-sky-600/50 text-sky-300 border border-sky-500/40 rounded-lg text-xs font-semibold transition"><i class="fa-solid fa-plus"></i> New fixture type</button>
+                    <button onclick="resetLibrary()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 rounded-lg text-xs font-semibold transition">Restore defaults</button>
+                </div>
+            </details>
         </div>
     </div>
 
@@ -564,698 +489,39 @@
                 </div>
 
                 <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                    <h4 class="font-bold text-sky-400 mb-1">3. Multi-Tier Board Topology & Circuit Grouping</h4>
-                    <p class="text-slate-300">Distribution is structured dynamically as MDB $\rightarrow$ SDB $\rightarrow$ Branch Circuits (CKT-1, CKT-2...). Small room loads are grouped automatically up to 80% breaker safety threshold.</p>
-                </div>
-
-                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                    <h4 class="font-bold text-sky-400 mb-1">4. Voltage Drop Equation ($\%V_d$)</h4>
+                    <h4 class="font-bold text-sky-400 mb-1">3. Voltage Drop Equation ($\%V_d$)</h4>
                     <p class="font-mono text-slate-200 mb-1">$\%V_d = \left( \frac{2 \times L \times I_d \times R_c}{V_{LN}} \right) \times 100$</p>
                     <p class="text-slate-400 text-[11px]">Where $L$ is wire run distance (meters), $R_c$ is conductor resistance ($\Omega/km$), and allowable limit is $\le 3\%$ for branch circuits.</p>
                 </div>
 
                 <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
-                    <h4 class="font-bold text-sky-400 mb-1">5. Phase Unbalance Percentage</h4>
+                    <h4 class="font-bold text-sky-400 mb-1">4. Phase Unbalance Percentage</h4>
                     <p class="font-mono text-slate-200">$\% \text{Unbalance} = \frac{|I_{max} - I_{avg}|}{I_{avg}} \times 100\%$</p>
+                </div>
+
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    <h4 class="font-bold text-sky-400 mb-1">5. Circuit Grouping Rule</h4>
+                    <p class="font-mono text-slate-200">$\sum I_d \times SF \le I_n$ (combined circuit capped at 16 A MCB)</p>
+                    <p class="text-slate-400 text-[11px] mt-1">Low-power loads (up to 500 W per unit, not HVAC / motor) are packed into circuits per room until the breaker capacity is reached; heavier loads get a dedicated circuit. Each circuit sits on one phase and circuits are balanced across R / Y / B.</p>
+                </div>
+
+                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+                    <h4 class="font-bold text-sky-400 mb-1">6. Boards, 3-Phase Loads & Feeders</h4>
+                    <p class="font-mono text-slate-200">3&Phi; load: $I_d = \frac{P}{\sqrt{3} \times V_{LL} \times \cos\phi}$ (carried equally on R, Y, B)</p>
+                    <p class="font-mono text-slate-200 mt-1">Feeder: $I_n \ge SF \times I_{max,phase}$ &nbsp; $\%V_d = \frac{\sqrt{3} \times L \times I \times R_c}{V_{LL}} \times 100$ (3&Phi;)</p>
+                    <p class="text-slate-400 text-[11px] mt-1">Each board adds up its circuits and sub-boards. 1-phase circuits and 1-phase boards are balanced across R / Y / B inside the 3-phase board that feeds them.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MAIN JAVASCRIPT APPLICATION LOGIC -->
-    <script>
-        // Default Project Data State
-        let config = {
-            standard: 'BNBC',
-            phase: '3P',
-            voltageLN: 230,
-            voltageLL: 400,
-            frequency: 50,
-            wireUnit: 'Metric', // Metric or AWG
-            safetyFactor: 1.25,
-            autoBalance: false,
-            autoGrouping: true
-        };
-
-        // Available Distribution Boards (Feature 1)
-        let distributionBoards = ['MDB-Main', 'SDB-1', 'SDB-2', 'FDB-Floor1'];
-
-        let fixtures = [
-            { id: 1, name: 'Master Bed Lighting', location: 'Master Bed', category: 'Lighting', qty: 6, watts: 18, pf: 0.95, distance: 15, phase: 'R', board: 'SDB-1', circuitId: 'CKT-1' },
-            { id: 2, name: 'Living Room Sockets', location: 'Living Room', category: 'Receptacles', qty: 4, watts: 180, pf: 0.90, distance: 20, phase: 'Y', board: 'SDB-1', circuitId: 'CKT-2' },
-            { id: 3, name: 'Master AC Unit 1.5T', location: 'Master Bed', category: 'HVAC', qty: 1, watts: 1800, pf: 0.85, distance: 25, phase: 'B', board: 'SDB-1', circuitId: 'CKT-3' },
-            { id: 4, name: 'Kitchen Power Socket', location: 'Kitchen', category: 'Receptacles', qty: 2, watts: 1500, pf: 0.95, distance: 12, phase: 'R', board: 'SDB-2', circuitId: 'CKT-4' },
-            { id: 5, name: 'Water Submersible Pump', location: 'Pump Room', category: 'Motors', qty: 1, watts: 1100, pf: 0.80, distance: 30, phase: 'Y', board: 'MDB-Main', circuitId: 'CKT-5' }
-        ];
-
-        // Wire Ampacity Lookup Table (Metric - Copper BYA/NYY)
-        const METRIC_WIRE_TABLE = [
-            { size: '1.5 rm', ampacity: 15.5, resistance: 12.1, pe: '1.5 rm' },
-            { size: '2.5 rm', ampacity: 21, resistance: 7.41, pe: '2.5 rm' },
-            { size: '4.0 rm', ampacity: 28, resistance: 4.61, pe: '4.0 rm' },
-            { size: '6.0 rm', ampacity: 36, resistance: 3.08, pe: '6.0 rm' },
-            { size: '10.0 rm', ampacity: 50, resistance: 1.83, pe: '10.0 rm' },
-            { size: '16.0 rm', ampacity: 68, resistance: 1.15, pe: '16.0 rm' },
-            { size: '25.0 rm', ampacity: 89, resistance: 0.727, pe: '16.0 rm' },
-            { size: '35.0 rm', ampacity: 110, resistance: 0.524, pe: '16.0 rm' },
-            { size: '50.0 rm', ampacity: 134, resistance: 0.387, pe: '25.0 rm' },
-            { size: '70.0 rm', ampacity: 171, resistance: 0.268, pe: '35.0 rm' },
-            { size: '95.0 rm', ampacity: 207, resistance: 0.193, pe: '50.0 rm' },
-            { size: '120.0 rm', ampacity: 239, resistance: 0.153, pe: '70.0 rm' }
-        ];
-
-        // Wire Ampacity Lookup Table (AWG - Copper THHN/THWN)
-        const AWG_WIRE_TABLE = [
-            { size: '14 AWG', ampacity: 15, resistance: 10.1, pe: '14 AWG' },
-            { size: '12 AWG', ampacity: 20, resistance: 6.36, pe: '12 AWG' },
-            { size: '10 AWG', ampacity: 30, resistance: 3.99, pe: '10 AWG' },
-            { size: '8 AWG', ampacity: 40, resistance: 2.52, pe: '10 AWG' },
-            { size: '6 AWG', ampacity: 55, resistance: 1.58, pe: '8 AWG' },
-            { size: '4 AWG', ampacity: 70, resistance: 0.99, pe: '8 AWG' },
-            { size: '2 AWG', ampacity: 95, resistance: 0.62, pe: '6 AWG' },
-            { size: '1/0 AWG', ampacity: 125, resistance: 0.39, pe: '6 AWG' },
-            { size: '2/0 AWG', ampacity: 145, resistance: 0.31, pe: '4 AWG' },
-            { size: '4/0 AWG', ampacity: 195, resistance: 0.19, pe: '2 AWG' }
-        ];
-
-        const STANDARD_BREAKER_RATINGS = [6, 10, 16, 20, 25, 32, 40, 50, 63, 80, 100, 125, 160, 200, 250, 315, 400];
-
-        // On Application Load
-        window.onload = function() {
-            updateDBDropdowns();
-            renderFixtureTable();
-            recalculateAll();
-        };
-
-        // System Configuration Updates
-        function updateConfig() {
-            config.standard = document.getElementById('standardSelect').value;
-            const systemPhase = document.getElementById('systemPhaseSelect').value;
-            config.phase = systemPhase;
-
-            if (systemPhase === '3P') {
-                config.voltageLN = 230;
-                config.voltageLL = 400;
-            } else if (systemPhase === '3P-208') {
-                config.voltageLN = 120;
-                config.voltageLL = 208;
-            } else if (systemPhase === '1P') {
-                config.voltageLN = 230;
-                config.voltageLL = 230;
-            } else if (systemPhase === '1P-120') {
-                config.voltageLN = 120;
-                config.voltageLL = 120;
-            }
-
-            config.frequency = parseInt(document.getElementById('freqSelect').value);
-            config.wireUnit = document.getElementById('wireUnitSelect').value;
-            config.safetyFactor = parseFloat(document.getElementById('safetyFactorSelect').value);
-
-            document.getElementById('configSummaryText').innerText = 
-                `${config.phase.includes('3P') ? '3-Phase ' + config.voltageLL + 'V' : '1-Phase ' + config.voltageLN + 'V'} ${config.frequency}Hz | ${config.standard}`;
-
-            recalculateAll();
-        }
-
-        // Helper to update DB select lists across UI
-        function updateDBDropdowns() {
-            const filterSelect = document.getElementById('activeDBFilter');
-            const currentFilterVal = filterSelect.value || 'ALL';
-            
-            filterSelect.innerHTML = '<option value="ALL">Show All Boards</option>';
-            distributionBoards.forEach(db => {
-                const opt = document.createElement('option');
-                opt.value = db;
-                opt.textContent = db;
-                filterSelect.appendChild(opt);
-            });
-            filterSelect.value = currentFilterVal;
-        }
-
-        function addNewDBPrompt() {
-            const name = prompt("Enter new Distribution Board Name (e.g. SDB-3, DB-Kitchen):");
-            if(name && !distributionBoards.includes(name.trim())) {
-                distributionBoards.push(name.trim());
-                updateDBDropdowns();
-                renderFixtureTable();
-                recalculateAll();
-            }
-        }
-
-        // Feature 2: Insert item directly from quick Fixture Library dropdown
-        function insertFromLibrary(valString) {
-            if(!valString) return;
-            const parts = valString.split('|');
-            if(parts.length >= 4) {
-                const name = parts[0];
-                const category = parts[1];
-                const watts = parseFloat(parts[2]);
-                const pf = parseFloat(parts[3]);
-                
-                const newId = fixtures.length > 0 ? Math.max(...fixtures.map(f => f.id)) + 1 : 1;
-                const phases = ['R', 'Y', 'B'];
-                const assignedPhase = phases[fixtures.length % 3];
-                const targetDB = distributionBoards[1] || 'SDB-1';
-
-                fixtures.push({
-                    id: newId,
-                    name: name,
-                    location: 'General',
-                    category: category,
-                    qty: 1,
-                    watts: watts,
-                    pf: pf,
-                    distance: 15,
-                    phase: assignedPhase,
-                    board: targetDB,
-                    circuitId: `CKT-${newId}`
-                });
-                
-                document.getElementById('fixtureLibrarySelect').value = '';
-                renderFixtureTable();
-                recalculateAll();
-            }
-        }
-
-        // Feature 3 & 4: Auto-Circuit Grouping Engine & Room Consolidation Strategy
-        function applyAutoCircuitGrouping() {
-            if(!document.getElementById('autoGroupingToggle').checked) return;
-
-            const roomStrategy = document.getElementById('roomConsolidationRule').value;
-            const limitRule = document.getElementById('circuitGroupingRule').value;
-            let maxAmpLimit = 16.0 * 0.8; // default 80% of 16A breaker
-            if(limitRule === '10A') maxAmpLimit = 10.0;
-            if(limitRule === '15A') maxAmpLimit = 15.0;
-
-            let cktCounter = 1;
-
-            if (roomStrategy === 'SEPARATE_ALL') {
-                fixtures.forEach(item => {
-                    item.circuitId = `CKT-${cktCounter++}`;
-                });
-            } else {
-                // Group low-power appliances (e.g., Lighting & Receptacles under 1500W total per room/board)
-                let groupMap = {};
-
-                fixtures.forEach(item => {
-                    const itemAmp = (item.qty * item.watts) / (config.voltageLN * item.pf);
-                    
-                    // High power appliances (AC, Pumps, Cooktops > 1500W) always get dedicated circuits
-                    if (item.watts * item.qty >= 1500 || item.category === 'HVAC' || item.category === 'Motors') {
-                        item.circuitId = `CKT-${cktCounter++}`;
-                    } else {
-                        const key = `${item.board}_${item.location || 'Gen'}_${item.phase}`;
-                        if(!groupMap[key]) groupMap[key] = { currentAmp: 0, cktId: `CKT-${cktCounter++}` };
-
-                        if(groupMap[key].currentAmp + itemAmp > maxAmpLimit) {
-                            groupMap[key].cktId = `CKT-${cktCounter++}`;
-                            groupMap[key].currentAmp = itemAmp;
-                        } else {
-                            groupMap[key].currentAmp += itemAmp;
-                        }
-                        item.circuitId = groupMap[key].cktId;
-                    }
-                });
-            }
-        }
-
-        // Render Table Rows for Fixtures
-        function renderFixtureTable() {
-            const tbody = document.getElementById('fixtureTableBody');
-            tbody.innerHTML = '';
-
-            const selectedFilter = document.getElementById('activeDBFilter')?.value || 'ALL';
-
-            fixtures.forEach((item) => {
-                if(selectedFilter !== 'ALL' && item.board !== selectedFilter) return;
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-800/40 transition";
-                tr.innerHTML = `
-                    <td class="py-2 px-2">
-                        <input type="text" value="${item.name}" onchange="updateFixture(${item.id}, 'name', this.value)" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-slate-200 focus:border-sky-500 focus:outline-none mb-1">
-                        <input type="text" value="${item.location || ''}" placeholder="Room/Location" onchange="updateFixture(${item.id}, 'location', this.value)" class="w-full bg-slate-950/60 border border-slate-800/80 rounded px-1.5 py-0.5 text-[10px] text-slate-400 focus:outline-none">
-                    </td>
-                    <td class="py-2 px-2">
-                        <select onchange="updateFixture(${item.id}, 'category', this.value)" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-slate-300 focus:outline-none">
-                            <option value="Lighting" ${item.category === 'Lighting' ? 'selected' : ''}>Lighting</option>
-                            <option value="Receptacles" ${item.category === 'Receptacles' ? 'selected' : ''}>Receptacles</option>
-                            <option value="HVAC" ${item.category === 'HVAC' ? 'selected' : ''}>HVAC</option>
-                            <option value="Motors" ${item.category === 'Motors' ? 'selected' : ''}>Motors</option>
-                            <option value="Appliances" ${item.category === 'Appliances' ? 'selected' : ''}>Appliances</option>
-                        </select>
-                    </td>
-                    <td class="py-2 px-2">
-                        <input type="number" min="1" value="${item.qty}" onchange="updateFixture(${item.id}, 'qty', parseInt(this.value))" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-center text-slate-200 focus:outline-none">
-                    </td>
-                    <td class="py-2 px-2">
-                        <input type="number" min="1" value="${item.watts}" onchange="updateFixture(${item.id}, 'watts', parseFloat(this.value))" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-slate-200 focus:outline-none">
-                    </td>
-                    <td class="py-2 px-2">
-                        <input type="number" step="0.01" min="0.5" max="1.0" value="${item.pf}" onchange="updateFixture(${item.id}, 'pf', parseFloat(this.value))" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-slate-200 focus:outline-none">
-                    </td>
-                    <td class="py-2 px-2">
-                        <select onchange="updateFixture(${item.id}, 'board', this.value)" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 text-indigo-300 font-mono text-[11px] focus:outline-none">
-                            ${distributionBoards.map(db => `<option value="${db}" ${item.board === db ? 'selected' : ''}>${db}</option>`).join('')}
-                        </select>
-                    </td>
-                    <td class="py-2 px-2">
-                        <input type="text" value="${item.circuitId || 'CKT-1'}" onchange="updateFixture(${item.id}, 'circuitId', this.value)" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 font-mono text-center text-sky-400 focus:outline-none">
-                    </td>
-                    <td class="py-2 px-2">
-                        <select onchange="updateFixture(${item.id}, 'phase', this.value)" class="w-full bg-slate-950 border border-slate-800 rounded px-1 py-1 font-bold ${item.phase === 'R' ? 'text-red-400' : item.phase === 'Y' ? 'text-amber-400' : 'text-blue-400'} focus:outline-none">
-                            <option value="R" ${item.phase === 'R' ? 'selected' : ''}>Phase R</option>
-                            <option value="Y" ${item.phase === 'Y' ? 'selected' : ''}>Phase Y</option>
-                            <option value="B" ${item.phase === 'B' ? 'selected' : ''}>Phase B</option>
-                        </select>
-                    </td>
-                    <td class="py-2 px-2 text-right">
-                        <button onclick="removeFixture(${item.id})" class="text-slate-500 hover:text-red-400 p-1 transition"><i class="fa-solid fa-trash-can"></i></button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // Add/Remove/Update Helpers
-        function addNewFixtureRow() {
-            const newId = fixtures.length > 0 ? Math.max(...fixtures.map(f => f.id)) + 1 : 1;
-            fixtures.push({
-                id: newId,
-                name: 'New Circuit Load',
-                location: 'Room 1',
-                category: 'Lighting',
-                qty: 1,
-                watts: 100,
-                pf: 0.95,
-                distance: 15,
-                phase: 'R',
-                board: distributionBoards[1] || 'SDB-1',
-                circuitId: `CKT-${newId}`
-            });
-            renderFixtureTable();
-            recalculateAll();
-        }
-
-        function removeFixture(id) {
-            fixtures = fixtures.filter(f => f.id !== id);
-            renderFixtureTable();
-            recalculateAll();
-        }
-
-        function updateFixture(id, key, value) {
-            const item = fixtures.find(f => f.id === id);
-            if (item) {
-                item[key] = value;
-                if(config.autoBalance && key === 'watts') autoBalancePhases();
-                else recalculateAll();
-
-                if(key === 'phase' || key === 'board') renderFixtureTable();
-            }
-        }
-
-        function addPresetItem(name, category, watts, pf, targetBoard = 'SDB-1', location = 'Room') {
-            const newId = fixtures.length > 0 ? Math.max(...fixtures.map(f => f.id)) + 1 : 1;
-            const phases = ['R', 'Y', 'B'];
-            const assignedPhase = phases[fixtures.length % 3];
-            
-            fixtures.push({
-                id: newId,
-                name: name,
-                location: location,
-                category: category,
-                qty: 1,
-                watts: watts,
-                pf: pf,
-                distance: 20,
-                phase: assignedPhase,
-                board: targetBoard,
-                circuitId: `CKT-${newId}`
-            });
-            closePresetModal();
-            renderFixtureTable();
-            recalculateAll();
-        }
-
-        function toggleAutoGrouping() {
-            config.autoGrouping = document.getElementById('autoGroupingToggle').checked;
-            recalculateAll();
-        }
-
-        function toggleAutoPhaseBalancing() {
-            config.autoBalance = document.getElementById('autoBalanceToggle').checked;
-            if(config.autoBalance) autoBalancePhases();
-            else recalculateAll();
-        }
-
-        // Core Calculation Engine
-        function recalculateAll() {
-            if(config.autoGrouping) applyAutoCircuitGrouping();
-
-            let totalConnectedWatts = 0;
-            let totalDemandWatts = 0;
-            let phaseKw = { R: 0, Y: 0, B: 0 };
-            let phaseAmps = { R: 0, Y: 0, B: 0 };
-
-            const calcBody = document.getElementById('calculatedScheduleBody');
-            calcBody.innerHTML = '';
-
-            const wireTable = config.wireUnit === 'Metric' ? METRIC_WIRE_TABLE : AWG_WIRE_TABLE;
-
-            // Group loads by Circuit ID for consolidated breaker and wire calculations
-            let circuitMap = {};
-
-            fixtures.forEach((item) => {
-                const itemWatts = item.qty * item.watts;
-                totalConnectedWatts += itemWatts;
-
-                let demandFactor = 1.0;
-                if (item.category === 'Lighting') demandFactor = 0.9;
-                else if (item.category === 'Receptacles') demandFactor = 0.7;
-                else if (item.category === 'HVAC') demandFactor = 0.85;
-
-                const demandWatts = itemWatts * demandFactor;
-                totalDemandWatts += demandWatts;
-
-                const circuitCurrent = itemWatts / (config.voltageLN * item.pf);
-                phaseKw[item.phase] += itemWatts / 1000;
-                phaseAmps[item.phase] += circuitCurrent;
-
-                const cktKey = item.circuitId || `CKT-${item.id}`;
-                if(!circuitMap[cktKey]) {
-                    circuitMap[cktKey] = {
-                        tag: cktKey,
-                        board: item.board,
-                        name: item.name,
-                        location: item.location,
-                        totalWatts: 0,
-                        totalAmps: 0,
-                        category: item.category,
-                        phase: item.phase,
-                        distance: item.distance,
-                        items: []
-                    };
-                }
-                circuitMap[cktKey].totalWatts += itemWatts;
-                circuitMap[cktKey].totalAmps += circuitCurrent;
-                circuitMap[cktKey].items.push(item);
-            });
-
-            // Populate Calculated Schedule Table
-            Object.values(circuitMap).forEach(ckt => {
-                const requiredBreakerRating = ckt.totalAmps * config.safetyFactor;
-                const mcbRating = STANDARD_BREAKER_RATINGS.find(r => r >= requiredBreakerRating) || 400;
-
-                let curve = 'Type C';
-                if (ckt.category === 'Lighting') curve = 'Type B';
-                if (ckt.category === 'Motors' || ckt.category === 'HVAC') curve = 'Type D';
-
-                const recommendedWire = wireTable.find(w => w.ampacity >= mcbRating) || wireTable[wireTable.length - 1];
-
-                const resistancePerKm = recommendedWire.resistance;
-                const vDropVolts = (2 * (ckt.distance / 1000) * ckt.totalAmps * resistancePerKm);
-                const vDropPct = (vDropVolts / config.voltageLN) * 100;
-                const isVdropWarning = vDropPct > 3.0;
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-800/40 transition";
-                tr.innerHTML = `
-                    <td class="py-2.5 px-3 text-sky-400 font-bold">${ckt.tag}</td>
-                    <td class="py-2.5 px-3 text-indigo-300">${ckt.board} (${ckt.location || 'Gen'})</td>
-                    <td class="py-2.5 px-3 text-slate-300">${ckt.totalWatts.toFixed(0)} W</td>
-                    <td class="py-2.5 px-3 text-amber-400 font-bold">${ckt.totalAmps.toFixed(1)} A</td>
-                    <td class="py-2.5 px-3 text-sky-400 font-bold">${mcbRating}A MCB</td>
-                    <td class="py-2.5 px-3 text-slate-400">${curve}</td>
-                    <td class="py-2.5 px-3 text-emerald-400 font-bold">${recommendedWire.size}</td>
-                    <td class="py-2.5 px-3 text-slate-400">${recommendedWire.pe}</td>
-                    <td class="py-2.5 px-3 text-slate-400">${config.wireUnit === 'Metric' ? 'BYA / NYY' : 'THHN / THWN'}</td>
-                    <td class="py-2.5 px-3 ${isVdropWarning ? 'text-red-400 font-bold' : 'text-slate-300'}">${vDropPct.toFixed(2)}%</td>
-                    <td class="py-2.5 px-3 text-center">
-                        ${isVdropWarning 
-                            ? '<span class="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 text-[10px] border border-red-500/30">V-DROP &gt; 3%</span>' 
-                            : '<span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px]">PASS</span>'}
-                    </td>
-                `;
-                calcBody.appendChild(tr);
-            });
-
-            // Total Apparent Power kVA
-            const avgPf = 0.90;
-            const totalKva = (totalConnectedWatts / 1000) / avgPf;
-
-            // Total Main Line Current
-            let totalMainAmps = 0;
-            if (config.phase.includes('3P')) {
-                totalMainAmps = (totalConnectedWatts) / (Math.sqrt(3) * config.voltageLL * avgPf);
-            } else {
-                totalMainAmps = totalConnectedWatts / (config.voltageLN * avgPf);
-            }
-
-            // Main MCCB Rating
-            const requiredMainMccb = totalMainAmps * config.safetyFactor;
-            const mainMccb = STANDARD_BREAKER_RATINGS.find(r => r >= requiredMainMccb) || 400;
-
-            // Phase Unbalance Calculation
-            const currents = [phaseAmps.R, phaseAmps.Y, phaseAmps.B];
-            const maxI = Math.max(...currents);
-            const minI = Math.min(...currents);
-            const avgI = (phaseAmps.R + phaseAmps.Y + phaseAmps.B) / 3 || 1;
-            const pctUnbalance = avgI > 0 ? ((maxI - minI) / avgI) * 100 : 0;
-
-            const Ir = phaseAmps.R, Iy = phaseAmps.Y, Ib = phaseAmps.B;
-            const approxNeutralI = Math.sqrt(Math.pow(Ir, 2) + Math.pow(Iy, 2) + Math.pow(Ib, 2) - (Ir*Iy + Iy*Ib + Ib*Ir));
-
-            // Update KPI Displays
-            document.getElementById('totalKwVal').innerText = (totalConnectedWatts / 1000).toFixed(2);
-            document.getElementById('demandKwVal').innerText = (totalDemandWatts / 1000).toFixed(2);
-            document.getElementById('totalKvaVal').innerText = totalKva.toFixed(2);
-            document.getElementById('designAmpsVal').innerText = totalMainAmps.toFixed(1);
-            document.getElementById('mainMccbVal').innerText = mainMccb + 'A';
-            document.getElementById('imbalanceVal').innerText = pctUnbalance.toFixed(1) + '%';
-
-            const badge = document.getElementById('imbalanceBadge');
-            if (pctUnbalance <= 5.0) {
-                badge.className = "text-xs font-semibold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400";
-                badge.innerText = "BALANCED";
-            } else if (pctUnbalance <= 12.0) {
-                badge.className = "text-xs font-semibold px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400";
-                badge.innerText = "MODERATE";
-            } else {
-                badge.className = "text-xs font-semibold px-1.5 py-0.5 rounded bg-red-500/20 text-red-400";
-                badge.innerText = "HIGH UNBALANCE";
-            }
-
-            // Update Busbar Visuals
-            updateBusbarVisuals(phaseKw, phaseAmps);
-
-            // Neutral & Deviation metric
-            document.getElementById('neutralCurrentVal').innerText = approxNeutralI.toFixed(2) + ' A';
-            document.getElementById('phaseDeviationVal').innerText = (maxI - minI).toFixed(2) + ' A';
-
-            // Feature 6: Re-render Dynamic Single-Line Diagram with Exact UI Node Styling
-            renderSLD(mainMccb, totalMainAmps);
-        }
-
-        // Phase Busbar Visual Bars Update
-        function updateBusbarVisuals(phaseKw, phaseAmps) {
-            const maxKw = Math.max(phaseKw.R, phaseKw.Y, phaseKw.B, 1.0);
-
-            document.getElementById('phaseR_stats').innerText = `${phaseKw.R.toFixed(2)} kW | ${phaseAmps.R.toFixed(1)} A`;
-            document.getElementById('phaseY_stats').innerText = `${phaseKw.Y.toFixed(2)} kW | ${phaseAmps.Y.toFixed(1)} A`;
-            document.getElementById('phaseB_stats').innerText = `${phaseKw.B.toFixed(2)} kW | ${phaseAmps.B.toFixed(1)} A`;
-
-            document.getElementById('phaseR_bar').style.width = `${(phaseKw.R / maxKw) * 100}%`;
-            document.getElementById('phaseY_bar').style.width = `${(phaseKw.Y / maxKw) * 100}%`;
-            document.getElementById('phaseB_bar').style.width = `${(phaseKw.B / maxKw) * 100}%`;
-        }
-
-        // Automatic Phase Load Balancing Algorithm
-        function autoBalancePhases() {
-            fixtures.sort((a, b) => (b.qty * b.watts) - (a.qty * a.watts));
-            let phaseLoads = { R: 0, Y: 0, B: 0 };
-
-            fixtures.forEach(item => {
-                let minPhase = 'R';
-                if (phaseLoads.Y < phaseLoads[minPhase]) minPhase = 'Y';
-                if (phaseLoads.B < phaseLoads[minPhase]) minPhase = 'B';
-
-                item.phase = minPhase;
-                phaseLoads[minPhase] += item.qty * item.watts;
-            });
-
-            renderFixtureTable();
-            recalculateAll();
-        }
-
-        // Feature 6: Dynamic Single-Line Diagram (SLD) Matching Reference Layout & Aesthetics
-        function renderSLD(mainMccbRating, totalCurrent) {
-            const svg = document.getElementById('sldSvg');
-            svg.innerHTML = '';
-
-            const width = Math.max(svg.clientWidth || 900, fixtures.length * 110);
-            const startX = width / 2;
-
-            function drawLine(x1, y1, x2, y2, stroke="#38bdf8", strokeWidth=2, dash=false) {
-                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                line.setAttribute("x1", x1); line.setAttribute("y1", y1);
-                line.setAttribute("x2", x2); line.setAttribute("y2", y2);
-                line.setAttribute("stroke", stroke);
-                line.setAttribute("stroke-width", strokeWidth);
-                if(dash) line.setAttribute("stroke-dasharray", "4,4");
-                svg.appendChild(line);
-            }
-
-            function drawRect(x, y, w, h, fill="#0f172a", stroke="#38bdf8", rx=4) {
-                const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-                rect.setAttribute("x", x); rect.setAttribute("y", y);
-                rect.setAttribute("width", w); rect.setAttribute("height", h);
-                rect.setAttribute("fill", fill); rect.setAttribute("stroke", stroke);
-                rect.setAttribute("stroke-width", "1.5");
-                rect.setAttribute("rx", rx);
-                svg.appendChild(rect);
-            }
-
-            function drawText(text, x, y, fill="#f8fafc", fontSize="11", anchor="middle", fontMono=true) {
-                const txt = document.createElementNS("http://www.w3.org/2000/svg", "text");
-                txt.setAttribute("x", x); txt.setAttribute("y", y);
-                txt.setAttribute("fill", fill);
-                txt.setAttribute("font-size", fontSize);
-                txt.setAttribute("text-anchor", anchor);
-                if (fontMono) txt.setAttribute("font-family", "JetBrains Mono, monospace");
-                txt.textContent = text;
-                svg.appendChild(txt);
-            }
-
-            // 1. Grid Supply Top Node
-            drawLine(startX, 20, startX, 60, "#38bdf8", 3);
-            drawRect(startX - 110, 15, 220, 32, "#0284c7", "#38bdf8", 8);
-            drawText(`3-PHASE GRID SUPPLY (${config.voltageLL}V)`, startX, 35, "#ffffff", "11", "middle");
-
-            // 2. Main Incomer MCCB Circuit Breaker
-            drawLine(startX, 47, startX, 90, "#38bdf8", 2);
-            drawRect(startX - 75, 80, 150, 36, "#0f172a", "#ef4444", 6);
-            drawText(`MAIN MCCB: ${mainMccbRating}A`, startX, 96, "#f8fafc", "10");
-            drawText(`Load: ${totalCurrent.toFixed(1)}A`, startX, 109, "#94a3b8", "9");
-
-            // 3. ELCB / RCCB Protection Node
-            drawLine(startX, 116, startX, 145, "#38bdf8", 2);
-            drawRect(startX - 65, 145, 130, 26, "#0f172a", "#10b981", 6);
-            drawText(`RCCB 30mA 4P`, startX, 161, "#10b981", "10");
-
-            // 4. Main Distribution Busbars (R - Y - B - N)
-            const busY = 210;
-            drawLine(startX, 171, startX, busY, "#38bdf8", 2);
-
-            const busWidth = Math.max(fixtures.length * 100, 560);
-            const busStartX = startX - (busWidth / 2);
-            const busEndX = startX + (busWidth / 2);
-
-            drawLine(busStartX, busY, busEndX, busY, "#ef4444", 4); // Phase R
-            drawLine(busStartX, busY + 8, busEndX, busY + 8, "#eab308", 4); // Phase Y
-            drawLine(busStartX, busY + 16, busEndX, busY + 16, "#3b82f6", 4); // Phase B
-            drawLine(busStartX, busY + 24, busEndX, busY + 24, "#64748b", 2, true); // Neutral
-
-            drawText("R-BUS", busStartX - 28, busY + 4, "#ef4444", "9", "right");
-            drawText("Y-BUS", busStartX - 28, busY + 12, "#eab308", "9", "right");
-            drawText("B-BUS", busStartX - 28, busY + 20, "#3b82f6", "9", "right");
-
-            // 5. Branch Circuits & MCBs
-            const spacing = busWidth / (fixtures.length + 1);
-
-            fixtures.forEach((item, idx) => {
-                const branchX = busStartX + spacing * (idx + 1);
-                const color = item.phase === 'R' ? '#ef4444' : item.phase === 'Y' ? '#eab308' : '#3b82f6';
-                const busOffset = item.phase === 'R' ? 0 : item.phase === 'Y' ? 8 : 16;
-
-                drawLine(branchX, busY + busOffset, branchX, busY + 50, color, 2);
-
-                const itemCurrent = (item.qty * item.watts) / (config.voltageLN * item.pf);
-                const reqMcb = STANDARD_BREAKER_RATINGS.find(r => r >= itemCurrent * config.safetyFactor) || 32;
-
-                // Branch Breaker Node
-                drawRect(branchX - 38, busY + 50, 76, 36, "#0f172a", color, 4);
-                drawText(`${reqMcb}A MCB`, branchX, busY + 65, "#f8fafc", "9");
-                drawText(`${item.circuitId || 'CKT'} (${item.phase})`, branchX, busY + 78, color, "8");
-
-                // Feeder line down to load node
-                drawLine(branchX, busY + 86, branchX, busY + 120, color, 1.5);
-
-                // Load Quantity Circle Node (Matching target reference style)
-                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                circle.setAttribute("cx", branchX);
-                circle.setAttribute("cy", busY + 132);
-                circle.setAttribute("r", "13");
-                circle.setAttribute("fill", "#ef4444"); // Red highlight quantity node
-                circle.setAttribute("stroke", "#ffffff");
-                circle.setAttribute("stroke-width", "1.5");
-                circle.setAttribute("class", "sld-node");
-                svg.appendChild(circle);
-
-                drawText(`${item.qty}`, branchX, busY + 136, "#ffffff", "10", "middle");
-                drawText(item.name.substring(0, 12), branchX, busY + 160, "#94a3b8", "9");
-                drawText(`[${item.board}]`, branchX, busY + 172, "#a5b4fc", "8");
-                drawText(`${(item.qty * item.watts)}W`, branchX, busY + 184, "#38bdf8", "8");
-            });
-        }
-
-        // Export Schedule Data to Excel Spreadsheet
-        function exportToExcel() {
-            const data = fixtures.map(item => {
-                const itemWatts = item.qty * item.watts;
-                const current = itemWatts / (config.voltageLN * item.pf);
-                const mcb = STANDARD_BREAKER_RATINGS.find(r => r >= current * config.safetyFactor) || 400;
-
-                return {
-                    "Circuit ID": item.circuitId || 'CKT-1',
-                    "Board": item.board,
-                    "Location": item.location || 'N/A',
-                    "Fixture Name": item.name,
-                    "Category": item.category,
-                    "Quantity": item.qty,
-                    "Unit Watts": item.watts,
-                    "Total Power (W)": itemWatts,
-                    "Power Factor": item.pf,
-                    "Phase": item.phase,
-                    "Design Current (A)": current.toFixed(2),
-                    "Breaker Sizing": mcb + 'A MCB',
-                    "Cable Length (m)": item.distance
-                };
-            });
-
-            const worksheet = XLSX.utils.json_to_sheet(data);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "Load Schedule");
-            XLSX.writeFile(workbook, "Electrical_Load_Schedule.xlsx");
-        }
-
-        // SVG SLD File Download
-        function downloadSldSvg() {
-            const svgData = document.getElementById("sldSvg").outerHTML;
-            const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "Single_Line_Diagram_SLD.svg";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-
-        // Modals & Reset
-        function openPresetModal() { document.getElementById('presetModal').classList.remove('hidden'); }
-        function closePresetModal() { document.getElementById('presetModal').classList.add('hidden'); }
-        function toggleFormulaModal() { document.getElementById('formulaModal').classList.toggle('hidden'); }
-
-        function resetProject() {
-            if(confirm("Reset all load entries to default template?")) {
-                fixtures = [
-                    { id: 1, name: 'Main Office Lighting', location: 'Office Ground', category: 'Lighting', qty: 10, watts: 18, pf: 0.95, distance: 15, phase: 'R', board: 'SDB-1', circuitId: 'CKT-1' },
-                    { id: 2, name: 'Workstation Sockets', location: 'Office Ground', category: 'Receptacles', qty: 6, watts: 180, pf: 0.90, distance: 20, phase: 'Y', board: 'SDB-1', circuitId: 'CKT-2' }
-                ];
-                renderFixtureTable();
-                recalculateAll();
-            }
-        }
-    </script>
+    <!-- APPLICATION LOGIC (load order matters) -->
+    <script src="js/data.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/calc.js"></script>
+    <script src="js/sld.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

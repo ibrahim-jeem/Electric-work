@@ -1,0 +1,12 @@
+{
+  "name": "electroload-pro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Electrical load calculator and single line diagram generator (static site)",
+  "scripts": {
+    "build:css": "tailwindcss -c tailwind.config.js -i src/input.css -o css/tailwind.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17"
+  }
+}

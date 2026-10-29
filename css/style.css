@@ -3,6 +3,36 @@
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
+        /* Deep futuristic navy / dark slate gradient base */
+            background-color: #030712;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.8) 0%, #020617 100%);
+            background-attachment: fixed;
+            position: relative;
+        }
+
+        /* Subtle Tech Grid Overlay */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(to right, rgba(56, 189, 248, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(56, 189, 248, 0.03) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Ensure main contents sit above the background overlay */
+        main, header, footer {
+            position: relative;
+            z-index: 1;
         }
 
         .font-mono {
@@ -39,18 +69,4 @@
             body { background: white !important; color: black !important; }
             .print-break { page-break-before: always; }
         }
-
-        /* Futuristic Tech Circuit Background */
-body.bg-slate-950 {
-    background-color: #030712;
-    background-image: 
-        /* Top-left glowing cyan radial gradient */
-        radial-gradient(circle at 10% 20%, rgba(2, 132, 199, 0.15) 0%, transparent 40%),
-        /* Center-right glowing blue atmosphere */
-        radial-gradient(circle at 85% 75%, rgba(3, 105, 161, 0.12) 0%, transparent 50%),
-        /* Subtle technical grid pattern overlay */
-        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
-    background-attachment: fixed;
-}
+    

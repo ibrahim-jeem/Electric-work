@@ -164,42 +164,8 @@
             </div>
         </section>
 
-        <!-- Distribution Board Hierarchy (MDB / SDB / SB / FDB / RDB) -->
-        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl overflow-hidden">
-            <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
-                <div>
-                    <h2 class="font-bold text-slate-200 flex items-center gap-2 text-sm uppercase tracking-wider">
-                        <i class="fa-solid fa-sitemap text-amber-400"></i> Distribution Board Hierarchy (MDB &rarr; SDB &rarr; SB)
-                    </h2>
-                    <p class="text-xs text-slate-400">Add FDB / RDB or extra levels. Each board gets a feeder MCB, wire size and V-drop. 3-phase boards can feed other boards.</p>
-                </div>
-                <button onclick="addBoard()" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-sm no-print">
-                    <i class="fa-solid fa-plus"></i> Add Board
-                </button>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse text-xs">
-                    <thead>
-                        <tr class="border-b border-slate-800 text-slate-400 font-semibold uppercase bg-slate-950/50">
-                            <th class="py-2.5 px-2">Board</th>
-                            <th class="py-2.5 px-2">Type</th>
-                            <th class="py-2.5 px-2">Fed From</th>
-                            <th class="py-2.5 px-2">Supply</th>
-                            <th class="py-2.5 px-2 w-20">Feed Dist (m)</th>
-                            <th class="py-2.5 px-2">Load (kW)</th>
-                            <th class="py-2.5 px-2">Current (A)</th>
-                            <th class="py-2.5 px-2">Feeder MCB</th>
-                            <th class="py-2.5 px-2">Feeder Wire</th>
-                            <th class="py-2.5 px-2">V-Drop (%)</th>
-                            <th class="py-2.5 px-2 text-right w-12 no-print">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="boardTableBody" class="divide-y divide-slate-800/60 font-mono"></tbody>
-                </table>
-            </div>
-        </section>
-
         <!-- Main Workspace Grid: Left = Loads, Right = Phase Balancing & Busbar -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
             <!-- Fixtures & Load Entry Section (7 Cols) -->
             <section class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col">
@@ -357,6 +323,41 @@
                 </div>
             </section>
         </div>
+
+        <!-- Distribution Board Hierarchy (MDB / SDB / SB / FDB / RDB) -->
+        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl overflow-hidden">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-800">
+                <div>
+                    <h2 class="font-bold text-slate-200 flex items-center gap-2 text-sm uppercase tracking-wider">
+                        <i class="fa-solid fa-sitemap text-amber-400"></i> Distribution Board Hierarchy (MDB &rarr; SDB &rarr; SB)
+                    </h2>
+                    <p class="text-xs text-slate-400">Add FDB / RDB or extra levels. Each board gets a feeder MCB, wire size and V-drop. 3-phase boards can feed other boards.</p>
+                </div>
+                <button onclick="addBoard()" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-sm no-print">
+                    <i class="fa-solid fa-plus"></i> Add Board
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-slate-400 font-semibold uppercase bg-slate-950/50">
+                            <th class="py-2.5 px-2">Board</th>
+                            <th class="py-2.5 px-2">Type</th>
+                            <th class="py-2.5 px-2">Fed From</th>
+                            <th class="py-2.5 px-2">Supply</th>
+                            <th class="py-2.5 px-2 w-20">Feed Dist (m)</th>
+                            <th class="py-2.5 px-2">Load (kW)</th>
+                            <th class="py-2.5 px-2">Current (A)</th>
+                            <th class="py-2.5 px-2">Feeder MCB</th>
+                            <th class="py-2.5 px-2">Feeder Wire</th>
+                            <th class="py-2.5 px-2">V-Drop (%)</th>
+                            <th class="py-2.5 px-2 text-right w-12 no-print">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="boardTableBody" class="divide-y divide-slate-800/60 font-mono"></tbody>
+                </table>
+            </div>
+        </section>
 
         <!-- Calculated Engineering Schedule Table (Breakers, Wire Sizing, Drop %) -->
         <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl overflow-hidden">
